@@ -26,9 +26,9 @@
         load = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
         load.center = self.center;
         load.layer.cornerRadius = 6;//30 / 2.0;
-        [load setBackgroundColor:[UIColor whiteColor]];
+        [load setBackgroundColor:[UIColor blackColor]];
         UIActivityIndicatorView *a = [[[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(25, 25, 50, 50)] autorelease];
-        [a setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
+        [a setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
         [a startAnimating];
         [load addSubview:a];
         [self addSubview:load];

@@ -14,7 +14,6 @@
 
 - (void)dealloc
 {
-    [urlConnection release];
     [_webData release];
     [super dealloc];
 }

@@ -19,7 +19,7 @@
 //    {
 //        self.window.frame = CGRectMake(0,20,self.window.frame.size.width,self.window.frame.size.height-20);
 //    }
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
     [[UINavigationBar appearance] setBarTintColor:[UIColor yellowColor]];
     return YES;
 }

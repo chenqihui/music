@@ -8,14 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-#import "ParserXML.h"
-#import "HttpWeb.h"
 #import "PlayMP3.h"
 
-@interface ViewController : UIViewController<ParserXMLDelegate, HttpWebDelegate, PlayMP3Delegate>
+@interface ViewController : UIViewController<PlayMP3Delegate>
 {
-    ParserXML *parserXML;
-    HttpWeb *httpWeb;
     PlayMP3 *playMP3;
     IBOutlet UINavigationBar *navController;
     //UISegmentedControl的使用
@@ -25,6 +21,7 @@
 @property (retain, nonatomic) IBOutlet UIButton *playBtn;
 @property (retain, nonatomic) IBOutlet UIButton *pauseBtn;
 @property (retain, nonatomic) IBOutlet UIButton *stopBtn;
+@property (retain, nonatomic) IBOutlet UITableView *m_tableView;
 - (IBAction)playMusic:(id)sender;
 - (IBAction)pauseMusic:(id)sender;
 - (IBAction)stopMusic:(id)sender;

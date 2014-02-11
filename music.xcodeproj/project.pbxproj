@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7471953918AA64CB00C8E7E7 /* DownLoadCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7471953818AA64CB00C8E7E7 /* DownLoadCell.m */; };
+		7471953B18AA64EF00C8E7E7 /* View.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7471953A18AA64EF00C8E7E7 /* View.xib */; };
 		74B0E45018A914040055CAD9 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 74B0E44F18A914040055CAD9 /* AVFoundation.framework */; };
 		B10A41A618A871EA00C3F24C /* ParserXML.m in Sources */ = {isa = PBXBuildFile; fileRef = B10A41A518A871EA00C3F24C /* ParserXML.m */; };
 		B10A41A918A8A3BC00C3F24C /* HttpWeb.m in Sources */ = {isa = PBXBuildFile; fileRef = B10A41A818A8A3BC00C3F24C /* HttpWeb.m */; };
@@ -41,6 +43,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7471953718AA64CB00C8E7E7 /* DownLoadCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownLoadCell.h; sourceTree = "<group>"; };
+		7471953818AA64CB00C8E7E7 /* DownLoadCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DownLoadCell.m; sourceTree = "<group>"; };
+		7471953A18AA64EF00C8E7E7 /* View.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = View.xib; sourceTree = "<group>"; };
+		7471953D18AA6C0200C8E7E7 /* ViewTagHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewTagHeader.h; sourceTree = "<group>"; };
 		74B0E44F18A914040055CAD9 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B10A41A418A871EA00C3F24C /* ParserXML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParserXML.h; sourceTree = "<group>"; };
 		B10A41A518A871EA00C3F24C /* ParserXML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParserXML.m; sourceTree = "<group>"; };
@@ -117,6 +123,9 @@
 			children = (
 				B10A41AB18A8C65600C3F24C /* LoadView.h */,
 				B10A41AC18A8C65600C3F24C /* LoadView.m */,
+				7471953718AA64CB00C8E7E7 /* DownLoadCell.h */,
+				7471953818AA64CB00C8E7E7 /* DownLoadCell.m */,
+				7471953A18AA64EF00C8E7E7 /* View.xib */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -155,6 +164,7 @@
 		B18195A218A4B91D006E7718 /* music */ = {
 			isa = PBXGroup;
 			children = (
+				7471953D18AA6C0200C8E7E7 /* ViewTagHeader.h */,
 				B10A41AA18A8C59D00C3F24C /* UI */,
 				B10A41A018A8718E00C3F24C /* Logic */,
 				B18195AB18A4B91D006E7718 /* AppDelegate.h */,
@@ -277,6 +287,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B18195B518A4B91D006E7718 /* Images.xcassets in Resources */,
+				7471953B18AA64EF00C8E7E7 /* View.xib in Resources */,
 				B18195A718A4B91D006E7718 /* InfoPlist.strings in Resources */,
 				B19C1FA418A9FAA20089EC9D /* DownLoadViewController.xib in Resources */,
 				B18195B018A4B91D006E7718 /* Main.storyboard in Resources */,
@@ -299,6 +310,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B10A41AD18A8C65600C3F24C /* LoadView.m in Sources */,
+				7471953918AA64CB00C8E7E7 /* DownLoadCell.m in Sources */,
 				B10A41A618A871EA00C3F24C /* ParserXML.m in Sources */,
 				B19C1FA318A9FAA20089EC9D /* DownLoadViewController.m in Sources */,
 				B18195B318A4B91D006E7718 /* ViewController.m in Sources */,

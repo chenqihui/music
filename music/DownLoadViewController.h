@@ -8,14 +8,23 @@
 
 #import <UIKit/UIKit.h>
 
-@interface DownLoadViewController : UIViewController
+#import "ParserXML.h"
+#import "HttpWeb.h"
+
+@interface DownLoadViewController : UIViewController<ParserXMLDelegate, HttpWebDelegate>
 {
     IBOutlet UITextField *nameText;
     IBOutlet UITextField *singerText;
     
     IBOutlet UIButton *checkBtn;
+    IBOutlet UITextField *showResultMusic;
+    IBOutlet UIButton *downloadBtn;
+    
+    ParserXML *parserXML;
+    HttpWeb *httpWeb;
 }
 //@property (retain, nonatomic) IBOutlet UIButton *checkBtn;
 - (IBAction)checkInBaidu:(id)sender;
+- (IBAction)downLoadMusic:(id)sender;
 
 @end

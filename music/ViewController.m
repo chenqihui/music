@@ -11,16 +11,17 @@
 #import "LoadView.h"
 #import "DownLoadViewController.h"
 
-@interface ViewController ()
+@interface ViewController ()<UITableViewDataSource, UITableViewDelegate>
 {
     NSURLConnection *urlConnection;
     NSString *name;
     NSString *singer;
     
-    LoadView *loadView;
     UIProgressView *progressView;
     UILabel *progressLabel;
     DownLoadViewController *downLoadViewController;
+    
+    NSMutableArray *m_arMusicList;
 }
 @property (strong, nonatomic) NSMutableData *webData;
 @property (strong, nonatomic) NSXMLParser *xmlParser;
@@ -34,11 +35,10 @@ typedef struct search search;
 
 @implementation ViewController
 
+@synthesize m_tableView = _m_tableView;
+
 - (void)dealloc
 {
-    [parserXML release];
-    [httpWeb release];
-    [loadView release];
     [progressView release];
     [progressLabel release];
     [_playBtn release];
@@ -48,80 +48,76 @@ typedef struct search search;
     [navController release];
     [musicSegment release];
     [downLoadViewController release];
+    [_m_tableView release];
+    
+    [m_arMusicList release];
     [super dealloc];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-//    if([self respondsToSelector:@selector(edgesForExtendedLayout)])
-//        self.edgesForExtendedLayout = UIRectEdgeNone;
-// 
-//    if( ([[[UIDevice currentDevice] systemVersion] doubleValue]>=7.0))
-//    {
-////        navController.translucent = NO;
-//        self.edgesForExtendedLayout = UIRectEdgeNone;
-//        self.extendedLayoutIncludesOpaqueBars = NO;
-//        self.modalPresentationCapturesStatusBarAppearance = NO;
-//
-//    }
+    
+    m_arMusicList = [[NSMutableArray alloc] init];
+    [self getMusicList];
+    
+    SETBORDER(_playBtn);
+    SETBORDER(_pauseBtn);
+    SETBORDER(_stopBtn);
     
     [musicSegment addTarget:self action:@selector(segmentAction:) forControlEvents:UIControlEventValueChanged];
     
-    progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
-    progressView.frame = CGRectMake(30, 104, 225, 30);
-    CGAffineTransform transform = CGAffineTransformMakeScale(1.0f, 3.0f);
-    progressView.transform = transform;
-    [progressView setBackgroundColor:[UIColor whiteColor]];
-//    progressView.progressTintColor = [UIColor whiteColor];
-    [progressView setTrackTintColor:[UIColor whiteColor]];
-    progressView.progress = 0;
-    [self.view addSubview:progressView];
+//    [self.view setBackgroundColor:[UIColor blackColor]];
     
-    progressLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMaxX(progressView.frame)+10, CGRectGetMidY(progressView.frame), 60, 30)];
-    [progressLabel setTextColor:[UIColor redColor]];
-    [progressLabel setBackgroundColor:[UIColor clearColor]];
-    [progressLabel setText:@"0%"];
-    [self.view addSubview:progressLabel];
+    playMP3 = [[PlayMP3 alloc] init];
+    playMP3.delegate = self;
+    name = @"怒放的生命";
+    singer = @"汪峰";
     
-	// Do any additional setup after loading the view, typically from a nib.
-    [self.view setBackgroundColor:[UIColor blackColor]];
+    _m_tableView.dataSource = self;
+    _m_tableView.delegate = self;
+    
+    [self controlMusicView];
+}
+
+- (void)controlMusicView
+{
     
     int wd = 80;
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, wd, wd)];
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - wd)/2, CGRectGetMaxY(_m_tableView.frame) + 30, wd, wd)];
     // 必須加上這一行，這樣圓角才會加在圖片的「外側」
-//    view.layer.masksToBounds = YES;
+    //    view.layer.masksToBounds = YES;
     // 其實就是設定圓角，只是圓角的弧度剛好就是圖片尺寸的一半
     view.layer.cornerRadius = wd / 2.0;
-    view.center = self.view.center;
+//    view.center = self.view.center;
     [view setBackgroundColor:[UIColor yellowColor]];
-//    view.alpha = 0;
+    //    view.alpha = 0;
     [view.layer setShadowColor:[UIColor yellowColor].CGColor];
     view.layer.shadowOffset = CGSizeMake(0,0);//shadowOffset阴影偏移，默认(0, -3),这个跟shadowRadius配合使用
     view.layer.shadowOpacity = 2;//阴影透明度，默认0
-    view.layer.shadowRadius = 6;//阴影半径，默认3
+    view.layer.shadowRadius = 10;//阴影半径，默认3
     
     [self.view addSubview:view];
     
-    UIView *view0 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, wd, wd)];
+    UIView *view0 = [[UIView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - wd)/2, view.frame.origin.y, wd, wd)];
     // 必須加上這一行，這樣圓角才會加在圖片的「外側」
     //    view.layer.masksToBounds = YES;
     // 其實就是設定圓角，只是圓角的弧度剛好就是圖片尺寸的一半
     view0.layer.cornerRadius = wd / 2.0;
-    view0.center = self.view.center;
+//    view0.center = self.view.center;
     [view0 setBackgroundColor:[UIColor yellowColor]];
     view0.alpha = 0.4;
     
     [self.view addSubview:view0];
     
     int wd2 = 70;
-    UIView *view2 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, wd2, wd2)];
+    UIView *view2 = [[UIView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - wd2)/2, view.frame.origin.y + (wd - wd2)/2, wd2, wd2)];
     // 必須加上這一行，這樣圓角才會加在圖片的「外側」
     view2.layer.masksToBounds = YES;
     // 其實就是設定圓角，只是圓角的弧度剛好就是圖片尺寸的一半
     view2.layer.cornerRadius = wd2 / 2.0;
-    view2.center = self.view.center;
-    [view2 setBackgroundColor:[UIColor blackColor]];
+//    view2.center = self.view.center;
+    [view2 setBackgroundColor:[UIColor whiteColor]];
     
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     [btn setFrame:view2.bounds];
@@ -132,36 +128,16 @@ typedef struct search search;
     [btn addTarget:self action:@selector(downloadMusic:) forControlEvents:UIControlEventTouchDown];
     
     [self.view addSubview:view2];
-
+    
     [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(change:) userInfo:view repeats:YES];
-
-//    UIView *view3 = [[UIView alloc] initWithFrame:CGRectMake(self.view.center.x - wd/2, view.frame.origin.y + wd + 20, wd, wd)];
-//    [view3 setBackgroundColor:[UIColor blueColor]];
-//    [self.view addSubview:view3];
-//    [view3.layer setShadowColor:[UIColor redColor].CGColor];
-//    view3.layer.shadowOffset = CGSizeMake(5,-5);//shadowOffset阴影偏移，默认(0, -3),这个跟shadowRadius配合使用
-//    view3.layer.shadowOpacity = 1;//阴影透明度，默认0
-//    view3.layer.shadowRadius = 3;//阴影半径，默认3
     
-    httpWeb = [[HttpWeb alloc] init];
-    httpWeb.delegate = self;
-    loadView = [[LoadView alloc] initWithFrame:self.view.bounds];
-    
-    playMP3 = [[PlayMP3 alloc] init];
-    playMP3.delegate = self;
-//    name = @"怒放的生命";
-//    singer = @"汪峰";
-    name = @"我";
-    singer = @"张国荣";
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *filename = [[NSString stringWithFormat:@"%@.mp3", name] lowercaseString];
-    NSString* path=[documentsDirectory stringByAppendingPathComponent:filename];
-    
-    if ([[NSFileManager defaultManager] fileExistsAtPath:path])
-    {
-        [playMP3 setMusic:path];
-    }
+    //    UIView *view3 = [[UIView alloc] initWithFrame:CGRectMake(self.view.center.x - wd/2, view.frame.origin.y + wd + 20, wd, wd)];
+    //    [view3 setBackgroundColor:[UIColor blueColor]];
+    //    [self.view addSubview:view3];
+    //    [view3.layer setShadowColor:[UIColor redColor].CGColor];
+    //    view3.layer.shadowOffset = CGSizeMake(5,-5);//shadowOffset阴影偏移，默认(0, -3),这个跟shadowRadius配合使用
+    //    view3.layer.shadowOpacity = 1;//阴影透明度，默认0
+    //    view3.layer.shadowRadius = 3;//阴影半径，默认3
 }
 
 - (void)change:(NSTimer *)aTimer
@@ -178,14 +154,8 @@ typedef struct search search;
      }];
 }
 
-static bool bDownMP3 = NO;
-
 - (void)downloadMusic:(id)sender
 {
-    [loadView appear:self.view];
-    bDownMP3 = NO;
-    NSString *urlString = [[[NSString stringWithFormat:@"http://box.zhangmen.baidu.com/x?op=12&count=1&title=%@$$%@$$$$", name, singer] retain] autorelease];
-    [self download:urlString];
 }
 
 - (IBAction)playMusic:(id)sender
@@ -203,78 +173,13 @@ static bool bDownMP3 = NO;
     [playMP3 stopMusic:sender];
 }
 
-- (void)download:(NSString *)urlStr
-{
-    dispatch_async(dispatch_get_global_queue(0, 0), ^
-    {
-        [httpWeb download:urlStr];
-    });
-//    [httpWeb download:urlStr];
-}
-
--(UIStatusBarStyle)preferredStatusBarStyle
-{
-    return UIStatusBarStyleLightContent;
-}
-
-#pragma mark parserXMLDelegate
-
-- (void)parserOver:(NSString *)result
-{
-    NSLog(@"%@", result);
-    bDownMP3 = YES;
-    dispatch_async(dispatch_get_global_queue(0, 0), ^
-                   {
-                       [httpWeb download:result downTag:YES];
-                   });
-    [loadView disappear];
-}
-
-#pragma mark HttpWebDelegate
-
-- (void)httpWebOver:(NSMutableData *)resultData
-{
-    // 使用NSXMLParser解析出我们想要的结果
-    if (bDownMP3)
-    {
-//        dispatch_async(dispatch_get_global_queue(0, 0), ^
-//        {
-            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);
-            NSString *documentsDirectory = [paths objectAtIndex:0];
-            NSString *filename = [[NSString stringWithFormat:@"%@.mp3", name] lowercaseString];
-            NSString* path=[documentsDirectory stringByAppendingPathComponent:filename];
-            if ([[NSFileManager defaultManager] fileExistsAtPath:path])
-            {
-                [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
-            }
-            [resultData writeToFile:path atomically:NO];
-            NSLog(@"下载mp3完成");
-            bDownMP3 = NO;
-//        });
-        [playMP3 setMusic:path];
-        return;
-    }
-    
-    dispatch_async(dispatch_get_global_queue(0, 0), ^
-                   {
-                        parserXML = [[ParserXML alloc] initParser:self];
-                        [parserXML parser:resultData];
-                   });
-}
-
-- (void)httpWebProgress:(float)n
-{
-    if (bDownMP3)
-    {
-        [self performSelectorOnMainThread:@selector(updateProgress:) withObject:[NSNumber numberWithFloat:n] waitUntilDone:NO];
-    }
-}
-
 - (void)updateProgress:(NSNumber*)progress
 {
     progressView.progress = [progress floatValue];
     [progressLabel setText:[NSString stringWithFormat:@"%.0f%%", [progress floatValue]*100]];
 }
+
+#pragma mark
 
 - (void)PlayMP3Progress:(float)n
 {
@@ -293,6 +198,8 @@ static bool bDownMP3 = NO;
         case 0:
             if(downLoadViewController)
             {
+                [self getMusicList];
+                [_m_tableView reloadData];
                 [downLoadViewController.view removeFromSuperview];
                 [downLoadViewController release];
                 downLoadViewController = nil;
@@ -311,6 +218,68 @@ static bool bDownMP3 = NO;
             
             break;
     }
+}
+
+#pragma mark
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return [m_arMusicList count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *cellIdentifier = @"LomemoBasicCell";
+    UITableViewCell* cell=nil;
+//    UILabel* text = nil;
+    cell=[tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if(cell==nil)
+    {
+        cell=[[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier] autorelease];
+        cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
+        
+//        text=[[[UILabel alloc]initWithFrame:CGRectMake(50,2,260,26)] autorelease];
+//        text.font=[UIFont systemFontOfSize:15];
+//        text.textColor=[UIColor blackColor];
+//        text.backgroundColor=[UIColor clearColor];
+//        [cell.contentView addSubview:text];
+    }
+//    text.text = [m_arDs objectAtIndex:[indexPath row]];
+//    text.text = name;
+    cell.textLabel.text = [m_arMusicList objectAtIndex:[indexPath row]];
+    
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *filename = [m_arMusicList objectAtIndex:[indexPath row]];
+    NSString* path=[documentsDirectory stringByAppendingPathComponent:filename];
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path])
+    {
+        [playMP3 setMusic:path];
+    }
+}
+
+- (void)getMusicList
+{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSFileManager * fm = [NSFileManager defaultManager];
+    
+    NSArray  *arr = [fm directoryContentsAtPath:documentsDirectory];
+    [m_arMusicList removeAllObjects];
+    [m_arMusicList addObjectsFromArray:arr];
+//    if ([m_arMusicList count] != 0)
+//    {
+//        [m_arMusicList removeObjectAtIndex:0];
+//    }
+    NSLog(@"%@", m_arMusicList);
 }
 
 @end

@@ -84,7 +84,7 @@ static bool bPause = NO;
 
 - (void)change:(NSTimer *)aTimer
 {
-    NSLog(@"%f", player.currentTime);
+//    NSLog(@"%f", player.currentTime);
     float n = player.currentTime/player.duration;
     [delegate PlayMP3Progress:n];
 }
