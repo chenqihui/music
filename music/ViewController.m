@@ -10,28 +10,20 @@
 
 #import "LoadView.h"
 #import "DownLoadViewController.h"
+#import "PlayerViewController.h"
 
 @interface ViewController ()<UITableViewDataSource, UITableViewDelegate>
 {
-    NSURLConnection *urlConnection;
     NSString *name;
     NSString *singer;
     
-    UIProgressView *progressView;
-    UILabel *progressLabel;
     DownLoadViewController *downLoadViewController;
+    PlayerViewController *playerViewController;
     
     NSMutableArray *m_arMusicList;
 }
-@property (strong, nonatomic) NSMutableData *webData;
-@property (strong, nonatomic) NSXMLParser *xmlParser;
 
 @end
-
-struct search {
-    int a;
-}s;
-typedef struct search search;
 
 @implementation ViewController
 
@@ -39,15 +31,9 @@ typedef struct search search;
 
 - (void)dealloc
 {
-    [progressView release];
-    [progressLabel release];
-    [_playBtn release];
-    [_pauseBtn release];
-    [_stopBtn release];
-    [playMP3 release];
-    [navController release];
     [musicSegment release];
     [downLoadViewController release];
+    [playerViewController release];
     [_m_tableView release];
     
     [m_arMusicList release];
@@ -57,140 +43,69 @@ typedef struct search search;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    m_arMusicList = [[NSMutableArray alloc] init];
     [self getMusicList];
-    
-    SETBORDER(_playBtn);
-    SETBORDER(_pauseBtn);
-    SETBORDER(_stopBtn);
     
     [musicSegment addTarget:self action:@selector(segmentAction:) forControlEvents:UIControlEventValueChanged];
     
-//    [self.view setBackgroundColor:[UIColor blackColor]];
-    
-    playMP3 = [[PlayMP3 alloc] init];
-    playMP3.delegate = self;
     name = @"怒放的生命";
     singer = @"汪峰";
     
     _m_tableView.dataSource = self;
     _m_tableView.delegate = self;
+//    _m_tableView.editing = YES;
     
-    [self controlMusicView];
+    [self.navigationController.navigationBar setBackgroundColor:[UIColor clearColor]];
+    
+    UIBarButtonItem *leftButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPlay target:self action:@selector(leftAction:)];
+    self.navigationItem.leftBarButtonItem = leftButtonItem;
+    
+    UIBarButtonItem *rightButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(rightAction:)];
+    self.navigationItem.rightBarButtonItem = rightButtonItem;
+    
+    playerViewController = [[PlayerViewController alloc] init];
+    [playerViewController.view setFrame:CGRectMake(0, CGRectGetHeight(self.view.frame), CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame) - 64)];
+    [self.view addSubview:playerViewController.view];
+    playerViewController.delegate = self;
 }
 
-- (void)controlMusicView
-{
-    
-    int wd = 80;
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - wd)/2, CGRectGetMaxY(_m_tableView.frame) + 30, wd, wd)];
-    // 必須加上這一行，這樣圓角才會加在圖片的「外側」
-    //    view.layer.masksToBounds = YES;
-    // 其實就是設定圓角，只是圓角的弧度剛好就是圖片尺寸的一半
-    view.layer.cornerRadius = wd / 2.0;
-//    view.center = self.view.center;
-    [view setBackgroundColor:[UIColor yellowColor]];
-    //    view.alpha = 0;
-    [view.layer setShadowColor:[UIColor yellowColor].CGColor];
-    view.layer.shadowOffset = CGSizeMake(0,0);//shadowOffset阴影偏移，默认(0, -3),这个跟shadowRadius配合使用
-    view.layer.shadowOpacity = 2;//阴影透明度，默认0
-    view.layer.shadowRadius = 10;//阴影半径，默认3
-    
-    [self.view addSubview:view];
-    
-    UIView *view0 = [[UIView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - wd)/2, view.frame.origin.y, wd, wd)];
-    // 必須加上這一行，這樣圓角才會加在圖片的「外側」
-    //    view.layer.masksToBounds = YES;
-    // 其實就是設定圓角，只是圓角的弧度剛好就是圖片尺寸的一半
-    view0.layer.cornerRadius = wd / 2.0;
-//    view0.center = self.view.center;
-    [view0 setBackgroundColor:[UIColor yellowColor]];
-    view0.alpha = 0.4;
-    
-    [self.view addSubview:view0];
-    
-    int wd2 = 70;
-    UIView *view2 = [[UIView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - wd2)/2, view.frame.origin.y + (wd - wd2)/2, wd2, wd2)];
-    // 必須加上這一行，這樣圓角才會加在圖片的「外側」
-    view2.layer.masksToBounds = YES;
-    // 其實就是設定圓角，只是圓角的弧度剛好就是圖片尺寸的一半
-    view2.layer.cornerRadius = wd2 / 2.0;
-//    view2.center = self.view.center;
-    [view2 setBackgroundColor:[UIColor whiteColor]];
-    
-    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [btn setFrame:view2.bounds];
-    [btn setBackgroundColor:[UIColor clearColor]];
-    [btn setTitle:@"play" forState:UIControlStateNormal];
-    [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    [view2 addSubview:btn];
-    [btn addTarget:self action:@selector(downloadMusic:) forControlEvents:UIControlEventTouchDown];
-    
-    [self.view addSubview:view2];
-    
-    [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(change:) userInfo:view repeats:YES];
-    
-    //    UIView *view3 = [[UIView alloc] initWithFrame:CGRectMake(self.view.center.x - wd/2, view.frame.origin.y + wd + 20, wd, wd)];
-    //    [view3 setBackgroundColor:[UIColor blueColor]];
-    //    [self.view addSubview:view3];
-    //    [view3.layer setShadowColor:[UIColor redColor].CGColor];
-    //    view3.layer.shadowOffset = CGSizeMake(5,-5);//shadowOffset阴影偏移，默认(0, -3),这个跟shadowRadius配合使用
-    //    view3.layer.shadowOpacity = 1;//阴影透明度，默认0
-    //    view3.layer.shadowRadius = 3;//阴影半径，默认3
-}
+static bool bPlayView = NO;
 
-- (void)change:(NSTimer *)aTimer
+-(void)leftAction:(id)sender
 {
-    UIView *view = aTimer.userInfo;
-    static int alphaTag = 1;
-    alphaTag = (alphaTag == 1 ? 0 : 1);
-    [UIView animateWithDuration:1.9 animations:^
+    int y = 64;
+    if (bPlayView)
+    {
+        y = CGRectGetHeight(self.view.frame);
+    }
+    [UIView animateWithDuration:0.6 animations:^
      {
-         view.alpha = alphaTag;
+         [playerViewController.view setFrame:CGRectMake(0, y, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame) - 64)];
      }                completion:^(BOOL finished)
      {
-         self.view.userInteractionEnabled = YES;
+         bPlayView = !bPlayView;
      }];
 }
 
-- (void)downloadMusic:(id)sender
+-(void)rightAction:(id)sender
 {
-}
-
-- (IBAction)playMusic:(id)sender
-{
-    [playMP3 playMusic:sender];
-}
-
-- (IBAction)pauseMusic:(id)sender
-{
-    [playMP3 pauseMusic:sender];
-}
-
-- (IBAction)stopMusic:(id)sender
-{
-    [playMP3 stopMusic:sender];
-}
-
-- (void)updateProgress:(NSNumber*)progress
-{
-    progressView.progress = [progress floatValue];
-    [progressLabel setText:[NSString stringWithFormat:@"%.0f%%", [progress floatValue]*100]];
-}
-
-#pragma mark
-
-- (void)PlayMP3Progress:(float)n
-{
-    [self performSelectorOnMainThread:@selector(updateProgress:) withObject:[NSNumber numberWithFloat:n] waitUntilDone:NO];
+//    UIAlertView *alter = [[UIAlertView alloc] initWithTitle:@"提示" message:@"你点击了导航栏右按钮" delegate:self  cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+//    [alter show];
+    
+    [self getMusicList];
+    [_m_tableView reloadData];
+    if (bPlayView)
+    {
+        [self leftAction:nil];
+    }
 }
 
 -(void)segmentAction:(UISegmentedControl *)Seg{
     
     NSInteger Index = Seg.selectedSegmentIndex;
     
+#ifdef DEBUG
     NSLog(@"Index %li", Index);
+#endif
     
     switch (Index)
     {
@@ -246,7 +161,7 @@ typedef struct search search;
     }
 //    text.text = [m_arDs objectAtIndex:[indexPath row]];
 //    text.text = name;
-    cell.textLabel.text = [m_arMusicList objectAtIndex:[indexPath row]];
+    cell.textLabel.text = [[m_arMusicList objectAtIndex:[indexPath row]] stringByDeletingPathExtension];
     
     return cell;
 }
@@ -255,31 +170,63 @@ typedef struct search search;
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
+//    NSString *filename = [m_arMusicList objectAtIndex:[indexPath row]];
+//    [playerViewController prepareMusic:filename];
+    [playerViewController prepareMusicOfIndex:[indexPath row]];
+    
+    [self performSelectorOnMainThread:@selector(leftAction:) withObject:nil waitUntilDone:NO];
+//    [playerViewController playMusic:nil];
+    [playerViewController stopMusic:nil];
+    [playerViewController playAndPauseMusic:nil];
+}
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tv editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	return UITableViewCellEditingStyleDelete;
+	//不能是UITableViewCellEditingStyleNone
+}
+
+
+//点击删除按钮后, 会触发如下事件. 在该事件中做响应动作就可以了
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle  forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *szSongName = [m_arMusicList objectAtIndex:[indexPath row]];
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *filename = [m_arMusicList objectAtIndex:[indexPath row]];
+    NSString *filename = [[NSString stringWithFormat:@"%@", szSongName] lowercaseString];
     NSString* path=[documentsDirectory stringByAppendingPathComponent:filename];
-    
     if ([[NSFileManager defaultManager] fileExistsAtPath:path])
     {
-        [playMP3 setMusic:path];
+        [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
     }
+    [m_arMusicList removeObjectAtIndex:[indexPath row]];
+    [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 - (void)getMusicList
 {
+    m_arMusicList = [[NSMutableArray alloc] init];
+    
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSFileManager * fm = [NSFileManager defaultManager];
     
     NSArray  *arr = [fm directoryContentsAtPath:documentsDirectory];
     [m_arMusicList removeAllObjects];
-    [m_arMusicList addObjectsFromArray:arr];
-//    if ([m_arMusicList count] != 0)
-//    {
-//        [m_arMusicList removeObjectAtIndex:0];
-//    }
-    NSLog(@"%@", m_arMusicList);
+    for (NSString *path in arr)
+    {
+        if ([[path pathExtension] isEqualToString:@"mp3"])
+        {
+            [m_arMusicList addObject:path];
+        }
+    }
+}
+
+#pragma mark
+
+- (NSArray *)musicList
+{
+    return m_arMusicList;
 }
 
 @end

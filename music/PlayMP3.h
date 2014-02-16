@@ -10,6 +10,8 @@
 
 @protocol PlayMP3Delegate <NSObject>
 
+@optional
+
 - (void)PlayMP3Progress:(float)n;
 
 @end
@@ -22,12 +24,16 @@
 }
 @property (assign, nonatomic) id<PlayMP3Delegate> delegate;
 
-- (void)playMusic:(id)sender;
+- (BOOL)playMusic:(id)sender;
 
 - (void)pauseMusic:(id)sender;
 
 - (void)stopMusic:(id)sender;
 
 - (void)setMusic:(NSString *)szURL;
+
+- (void)playAtTime:(float)n;
+
+- (BOOL)playing;
 
 @end

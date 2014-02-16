@@ -11,4 +11,6 @@
 
 #define SETBORDER(view) view.layer.borderWidth = 1;view.layer.masksToBounds = YES;view.layer.cornerRadius = 8;
 
+#define SETCYCLEBORDER(view) view.layer.borderWidth = 1;view.layer.masksToBounds = YES;view.layer.cornerRadius = view.frame.size.height/2.0;[view setBackgroundColor:[UIColor whiteColor]];
+
 #endif

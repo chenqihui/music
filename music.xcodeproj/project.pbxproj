@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		7471953918AA64CB00C8E7E7 /* DownLoadCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7471953818AA64CB00C8E7E7 /* DownLoadCell.m */; };
 		7471953B18AA64EF00C8E7E7 /* View.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7471953A18AA64EF00C8E7E7 /* View.xib */; };
+		74A65CD218AD0B9E0091DFF9 /* PlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 74A65CD018AD0B9E0091DFF9 /* PlayerViewController.m */; };
+		74A65CD318AD0B9E0091DFF9 /* PlayerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 74A65CD118AD0B9E0091DFF9 /* PlayerViewController.xib */; };
 		74B0E45018A914040055CAD9 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 74B0E44F18A914040055CAD9 /* AVFoundation.framework */; };
 		B10A41A618A871EA00C3F24C /* ParserXML.m in Sources */ = {isa = PBXBuildFile; fileRef = B10A41A518A871EA00C3F24C /* ParserXML.m */; };
 		B10A41A918A8A3BC00C3F24C /* HttpWeb.m in Sources */ = {isa = PBXBuildFile; fileRef = B10A41A818A8A3BC00C3F24C /* HttpWeb.m */; };
@@ -47,6 +49,9 @@
 		7471953818AA64CB00C8E7E7 /* DownLoadCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DownLoadCell.m; sourceTree = "<group>"; };
 		7471953A18AA64EF00C8E7E7 /* View.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = View.xib; sourceTree = "<group>"; };
 		7471953D18AA6C0200C8E7E7 /* ViewTagHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewTagHeader.h; sourceTree = "<group>"; };
+		74A65CCF18AD0B9E0091DFF9 /* PlayerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerViewController.h; sourceTree = "<group>"; };
+		74A65CD018AD0B9E0091DFF9 /* PlayerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayerViewController.m; sourceTree = "<group>"; };
+		74A65CD118AD0B9E0091DFF9 /* PlayerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PlayerViewController.xib; sourceTree = "<group>"; };
 		74B0E44F18A914040055CAD9 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B10A41A418A871EA00C3F24C /* ParserXML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParserXML.h; sourceTree = "<group>"; };
 		B10A41A518A871EA00C3F24C /* ParserXML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParserXML.m; sourceTree = "<group>"; };
@@ -175,6 +180,9 @@
 				B19C1FA018A9FAA20089EC9D /* DownLoadViewController.h */,
 				B19C1FA118A9FAA20089EC9D /* DownLoadViewController.m */,
 				B19C1FA218A9FAA20089EC9D /* DownLoadViewController.xib */,
+				74A65CCF18AD0B9E0091DFF9 /* PlayerViewController.h */,
+				74A65CD018AD0B9E0091DFF9 /* PlayerViewController.m */,
+				74A65CD118AD0B9E0091DFF9 /* PlayerViewController.xib */,
 				B18195B418A4B91D006E7718 /* Images.xcassets */,
 				B18195A318A4B91D006E7718 /* Supporting Files */,
 			);
@@ -291,6 +299,7 @@
 				B18195A718A4B91D006E7718 /* InfoPlist.strings in Resources */,
 				B19C1FA418A9FAA20089EC9D /* DownLoadViewController.xib in Resources */,
 				B18195B018A4B91D006E7718 /* Main.storyboard in Resources */,
+				74A65CD318AD0B9E0091DFF9 /* PlayerViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,6 +327,7 @@
 				B10A41A918A8A3BC00C3F24C /* HttpWeb.m in Sources */,
 				B18195A918A4B91D006E7718 /* main.m in Sources */,
 				B10A41B018A8CBFD00C3F24C /* PlayMP3.m in Sources */,
+				74A65CD218AD0B9E0091DFF9 /* PlayerViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

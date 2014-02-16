@@ -51,12 +51,7 @@
     player.volume = 0.5f;
 }
 
-static bool bPause = NO;
-
-//IOS中定时器NSTimer的开启与关闭
-//http://blog.csdn.net/enuola/article/details/8099461
-
-- (void)playMusic:(id)sender
+- (void)initPlayer
 {
     if(!timer)
     {
@@ -67,26 +62,53 @@ static bool bPause = NO;
         [timer setFireDate:[NSDate distantPast]];
         bPause = NO;
     }
-    [player play];
+}
+
+static bool bPause = NO;
+
+//IOS中定时器NSTimer的开启与关闭
+//http://blog.csdn.net/enuola/article/details/8099461
+
+- (BOOL)playMusic:(id)sender
+{
+    [self initPlayer];
+    bPause = NO;
+    return [player play];
 }
 
 - (void)pauseMusic:(id)sender
 {
     [timer setFireDate:[NSDate distantFuture]];
-    [player pause];
     bPause = YES;
+    [player pause];
 }
 
 - (void)stopMusic:(id)sender
 {
+    player.currentTime = 0;
+    [timer setFireDate:[NSDate distantFuture]];
+    bPause = YES;
     [player stop];
 }
 
 - (void)change:(NSTimer *)aTimer
 {
-//    NSLog(@"%f", player.currentTime);
     float n = player.currentTime/player.duration;
-    [delegate PlayMP3Progress:n];
+    if([delegate respondsToSelector:@selector(PlayMP3Progress:)])
+        [delegate PlayMP3Progress:n];
+}
+
+- (void)playAtTime:(float)n
+{
+    NSTimeInterval t = (double)(n * player.duration);
+    player.currentTime = t;
+    if(!bPause)
+        [self playMusic:nil];
+}
+
+- (BOOL)playing
+{
+    return player.playing;
 }
 
 @end
